@@ -1,0 +1,52 @@
+service: task-manager-backend
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: sa-east-1
+  environment:
+    MONGO_URI: ${env:MONGO_URI}
+  iam:
+    role:
+      statements:
+
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+functions:
+
+  get_tasks:
+    handler: handlers/tasks.lambda_handler
+    events:
+      - http:
+          path: /tasks
+          method: get
+          cors: true
+
+  create_task:
+    handler: handlers/tasks.lambda_handler
+    events:
+      - http:
+          path: /tasks
+          method: post
+          cors: true
+
+  update_task:
+    handler: handlers/tasks.lambda_handler
+    events:
+      - http:
+          path: /tasks/{taskId}
+          method: put
+          cors: true
+
+  delete_task:
+    handler: handlers/tasks.lambda_handler
+    events:
+      - http:
+          path: /tasks/{taskId}
+          method: delete
+          cors: true
